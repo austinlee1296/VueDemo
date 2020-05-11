@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算属性</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <div>{{msg}}</div>
+<!--    使用js的方法，导致模板中内容过多，代码可读性降低-->
+    <div>{{msg.split('').reverse().join('')}}</div>
+<!--    使用计算属性-->
+    <div>{{reversedMessage}}</div>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data:() => {
+            return {
+                msg:'hello'
+            }
+        },
+        methods: {},
+        computed: {
+            reversedMessage: function() {
+                return this.msg.split('').reverse().join('')
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

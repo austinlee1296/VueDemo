@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <script src="../../scripts/vue.js"></script>
+    <link type="text/css" rel="stylesheet" href="common.css">
+</head>
+<body>
+<div id="app">
+    <!--1.3 根组件中定义容器，包裹子组件-->
+    <div class="container">
+        <my-cart></my-cart>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    /* 1. 定制组件模板，通过组件拼接得到完整的页面显示
+    * // 1.1 定义3个子组件模板，由于这3个子组件只需要模板功能，所以可以用对象的方式声明
+    * // 1.2 将上面声明的三个子组件放入父组件的子组件列表
+    * // 1.3 根组件中定义容器，包裹子组件
+    ========================================================= */
+    /* 2.逐一实现各个组件的功能点
+    * // 2.1标题组件（通过父组件传递用户名，在标题中显示用户名）
+    * =====// 2.1.1 在父组件中定义用户名
+    * =====// 2.1.2 在父组件中通过数据绑定向子组件传递值（父组件向子组件传值）
+    * =====// 2.1.3 在子组件中通过props接收父组件传递的值
+    * =====// 2.1.4 在子组件中调用父组件传递的值
+    * -----------------------------------------------------------
+    * // 2.2总价组件（通过父组件传递用户名，在总价中计算显示）
+    * =====// 2.2.1 在父组件中定义商品列表
+    * =====// 2.2.2 在父组件中通过数据绑定向子组件传递值（父组件向子组件传值）
+    * =====// 2.2.3 在子组件中通过props接收父组件传递的值
+    * =====// 2.2.4 在子组件中的计算属性中完成计算
+    * =====// 2.2.5 在子组件中调用父组件传递的值
+    * ----------------------------------------------------------
+    * // 2.3列表组件（通过父组件传递商品列表，在列表中循环显示商品数据）
+    * =====// 2.3.1 在父组件中定义商品列表
+    * =====// 2.3.2 在父组件中通过数据绑定向子组件传递值（父组件向子组件传值）
+    * =====// 2.3.3 在子组件中通过props接收父组件传递的值
+    * =====// 2.3.4 在子组件中调用父组件传递的值，循环展示商品信息
+    * =====// 2.3.5 在子组件中，通过自定义方法，向父组件抛出增、减、删的方法
+    * =====// 2.3.6 在父组件中，通过自定义方法，接收子组件抛出的方法和参数
+    * =====// 2.3.7 在父组件中，通过methods来实现每一个子组件抛出的方法
+    ========================================================= */
+
+
+    // 1.1 定义3个子组件模板，由于这3个子组件只需要模板功能，所以可以用对象的方式声明
+    let CartTitle = {
+        // 2.1.2 在子组件中通过props接收父组件传递的值
+        props: ['username'],
+        // 2.1.4 在子组件中调用父组件传递的值
+        template: `
+            <div class="title">{{username}}的商品</div>
+        `
+    }
+    let CartList = {
+        // 2.3.3 在子组件中通过props接收父组件传递的值
+        props:['product_list'],
+        // 2.3.4 在子组件中调用父组件传递的值，循环展示商品信息
+        // 2.3.5 在子组件中，通过自定义方法，向父组件抛出增、减、删的方法
+        template: `
+                <div>
+                    <div class="item" :key="item.id" v-for="(item, index) in product_list">
+                        <img :src="item.img"/>
+                        <div class="name">{{item.name}}</div>
+                        <div class="change">
+                            <a href="" @click.prevent="$emit('minus-item', item.id)">－</a>
+                            <input type="text" class="num" v-model="item.count"/>
+                            <a href="" @click.prevent="$emit('add-item', item.id)">＋</a>
+                        </div>
+                        <div class="del" @click="$emit('delete-item', item.id)">×</div>
+                    </div>
+                </div>
+        `,
+    }
+    let CartTotal = {
+        // 2.2.3 在子组件中通过props接收父组件传递的值
+        props: ['product_list'],
+        // 2.2.4 在子组件中调用父组件传递的值
+        template: `
+            <div class="total">
+              <span >总价：{{total}}</span>
+              <button>结算</button>
+            </div>
+        `,
+        computed:{
+            // 计算商品的总价。由于所有的总价都在这里计算，所以其他改变不需要另外计算，会自动调用
+            'total':function () {
+                // 定义总价变量
+                let total = 0;
+                // 使用数组的forEach方法遍历数组
+                this.product_list.forEach((item)=>{
+                    // 累加总价
+                    total += item.price * item.count;
+                });
+                // 返回总价
+                return total;
+            }
+        }
+    }
+
+    Vue.component('my-cart', {
+        data: function () {
+            return {
+                // 2.1.1 在父组件中定义用户名
+                username: '张三',
+                // 2.2.1 在父组件中定义商品列表
+                product_list: [{
+                    id: 1,
+                    img: 'img/a.jpg',
+                    name: 'TCL电视',
+                    count: 1,
+                    price: 100,
+                },
+                {
+                    id: 2,
+                    img: 'img/b.jpg',
+                    name: '机顶盒',
+                    count: 1,
+                    price: 100,
+                },
+                {
+                    id: 3,
+                    img: 'img/c.jpg',
+                    name: '海尔冰箱',
+                    count: 1,
+                    price: 100,
+                },
+                {
+                    id: 4,
+                    img: 'img/d.jpg',
+                    name: '小米手机',
+                    count: 1,
+                    price: 100,
+                },
+                {
+                    id: 5,
+                    img: 'img/e.jpg',
+                    name: 'PPTV电视',
+                    count: 1,
+                    price: 1000,
+                }],
+            }
+        },
+        // 2.n.2 在父组件中通过数据绑定向子组件传递值（父组件向子组件传值）
+        // 2.3.6 在父组件中，通过自定义方法，接收子组件抛出的方法和参数
+        template: `
+            <div class="cart">
+                <cart-title :username="username"></cart-title>
+                <cart-list :product_list="product_list" @add-item="handler_add($event)" @minus-item="handler_minus($event)" @delete-item="handler_del($event)"></cart-list>
+                <cart-total :product_list="product_list"></cart-total>
+            </div>
+        `,
+        components: {
+            // 1.2 将上面声明的三个子组件放入父组件的子组件列表
+            'cart-title': CartTitle,
+            'cart-list': CartList,
+            'cart-total': CartTotal,
+
+        },
+        // 2.3.7 在父组件中，通过methods来实现每一个子组件抛出的方法
+        methods:{
+            handler_add:function (val) {
+                // 根据传入的id找到数据，记得返回值是列表，所以要加索引[0]
+                let item = this.product_list.filter(function (item) {
+                    return item.id === val;
+                })[0];
+                // 更新值
+                item.count += 1;
+            },
+            handler_minus:function (val) {
+                // 根据传入的id找到数据，记得返回值是列表，所以要加索引[0]
+                let item = this.product_list.filter(function (item) {
+                    return item.id === val;
+                })[0];
+                // 更新值
+                item.count -= 1;
+                // 判断，如果count为0，则触发删除方法
+                if (item.count === 0){
+                    this.handler_del(item.id)
+                }
+            },
+            handler_del:function (val) {
+                // 根据传入的id找到数据对应的下标值
+                let index = this.product_list.findIndex(function (item) {
+                    return item.id === val;
+                });
+                // 根据下标值来删除数据
+                this.product_list.splice(index,1);
+            }
+        },
+    })
+    let vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+        mounted: function () {
+        }
+    });
+
+</script>
+</body>
+</html>

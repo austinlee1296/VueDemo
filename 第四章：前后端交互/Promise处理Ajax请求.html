@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Promise处理Ajax请求</title>
+    <script src="../scripts/vue.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+</head>
+<body>
+<div id="app">
+
+</div>
+
+<script type="text/javascript">
+    // 封装一个独立的函数
+    function queryData(url) {
+        // 声明一个Promise实例对象
+        return new Promise(function (resolve, reject) {
+            // 处理异步数据
+            // 实例化 XMLHttpRequest 对象, 用于在后台与服务器交换数据.
+            /*XMLHttpRequest 对象是开发者的梦想，因为您能够：
+            *    在不重新加载页面的情况下更新网页
+            *    在页面已加载后从服务器请求数据
+            *    在页面已加载后从服务器接收数据
+            *    在后台向服务器发送数据
+            * 所有现代的浏览器都支持 XMLHttpRequest 对象。
+            =================================================== */
+            let xhr = new XMLHttpRequest();
+            // 使用回调函数（这里可以理解为一个状态监视函数，当监视的状态发生变化时调用）
+            xhr.onreadystatechange = function () {
+                // 处理相应结果 这个函数每当readystate发生变化就会触发，因此不止调用一次
+                // 屏蔽掉多余的信息
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 处理正常情况，调用Promise的resolve方法
+                    resolve(xhr.responseText);
+                } else if (xhr.readyState === 4) {
+                    // 处理异常情况，调用Promise的reject方法
+                    reject('Bad Connection')
+                }
+            };
+            // 通过open准备发送前参数
+            xhr.open('get', url);
+            // 通过send准备发送数据
+            xhr.send(null);
+        });
+        // 返回实例化Promise对象
+    }
+
+    // 发送一次请求
+    // 调用自定义函数，传递url，接收数据或错误信息
+    // queryData('http://127.0.0.1:8000/api/v1/products/').then(function (data) {
+    //     // 调用了resolve
+    //     console.log(data);
+    // }, function (info) {
+    //     // 调用了reject？？
+    //     console.log(info);
+    // }).catch(function (err) {
+    //     console.log(err);
+    // });
+
+    // 发送多次请求，并且保证顺序
+    // queryData('http://127.0.0.1:8000/api/v1/products/1/').then(function (data) {
+    //     console.log(data);
+    //     return queryData('http://127.0.0.1:8000/api/v1/products/2/').then(function (data) {
+    //         console.log(data);
+    //         return queryData('http://127.0.0.1:8000/api/v1/products/3/').then(function (data) {
+    //             console.log(data)
+    //         });
+    //     });
+    // });
+
+    // then函数的返回值
+    // // 1.返回一个Promise对象
+    // // 声明一个新的自定义函数对象（这个自定义函数的返回值是一个Promise对象）
+    // let pm1 = queryData('http://127.0.0.1:8000/api/v1/products/1/');
+    // // 声明一个新的Promise对象（这里用setTimeout做模拟异步）
+    // let pm2 = new Promise(function (resolve, reject) {
+    //     setTimeout(function () {
+    //         resolve('pm2 data');
+    //     }, 1000)
+    // });
+    // // 让pm1的then方法中直接返回Promise对象pm2
+    // pm1.then(function (data) {
+    //     return pm2;
+    // // 这里只要调用then，得到的数据都是pm2自身的data数据。
+    // }).then(function (data) {
+    //     console.log(data);
+    // })
+    // // 证明：如果then方法的返回值是一个Promise对象，那么这个对象会把数据传递给下一个then
+
+    // 2.返回一个普通值
+    // 声明一个新的自定义函数对象（这个自定义函数的返回值是一个Promise对象）
+    let pm1 = queryData('http://127.0.0.1:8000/api/v1/products/1/');
+    // 声明一个新的Promise对象（这里用setTimeout做模拟异步）
+    let pm2 = new Promise(function (resolve, reject) {
+        setTimeout(function () {
+            resolve('pm2 data');
+        }, 1000)
+    });
+    // 让pm1的then方法中直接返回普通值
+    pm1.then(function (data) {
+        return data;
+        // 这里只要调用then，得到的数据都是pm1返回的data数据。
+    }).then(function (data) {
+            console.log(data);
+        })
+    // 证明：如果then方法的返回值是普通值，那么会把这个值传递给下一个then
+
+
+
+
+
+    let vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

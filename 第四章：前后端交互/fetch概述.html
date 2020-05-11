@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fetch概述</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+</div>
+
+<script type="text/javascript">
+
+    fetch('http://127.0.0.1:8000/api/v1/products/').then(function (data) {
+        // data是整个返回的Response，data.text()返回的是一个Promise对象
+        // 第一个then返回了Promise对象，那么接下来的一个then就是这个对象的数据
+        return data.text();
+    }).then(function (data) {
+        console.log(data);
+    })
+
+    let vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>编程式导航</title>
+    <!--导入Vue文件-->
+    <script src="../scripts/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<!--被vm实例锁控制的区域-->
+<div id="app">
+    <router-link to="/user">User</router-link>
+    <router-link to="/register">Register</router-link>
+
+    <router-view></router-view>
+</div>
+
+<script type="text/javascript">
+
+    let User = {
+        template: `
+            <div>
+                <button @click="goRegister">跳转到注册页面</button>
+            </div>
+        `,
+        methods: {
+            goRegister: function () {
+                this.$router.push('/register');
+            }
+        }
+    }
+
+    let Register = {
+        template: `
+            <div>
+                <button @click="handle_back">后退</button>
+            </div>
+        `,
+        methods:{
+            handle_back:function () {
+                this.$router.go(-1);
+            }
+        }
+    }
+
+    let router = new VueRouter({
+        routes: [
+            {path: '/', redirect: '/user'},
+            {path: '/user', component: User},
+            {path: '/register', component: Register}
+        ]
+    })
+
+    // 创建vm实例对象
+    let vm = new Vue({
+        // 指定控制的区域
+        el: '#app',
+        router,
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

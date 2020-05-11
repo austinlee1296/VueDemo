@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>父组件向子组件传递值</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <sun-com fathers-msg='固定的父组件的值'></sun-com>
+    <sun-com :fathers-msg='fatherMsg'></sun-com>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            fatherMsg: '这是父组件的值'
+        },
+        methods: {},
+        components: {
+            'sun-com': {
+                data: function () {
+                    return {
+                        msg: '这是子组件的值'
+                    }
+                },
+                props: [
+                    'fathersMsg'
+                ],
+                template: `
+                    <div>
+                        <span>{{msg}}</span>
+                        <span>{{fathersMsg}}</span>
+                    </div>
+                `,
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>侦听器</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="firstName">
+    <input type="text" v-model="lastName">
+    <div>{{fullName}}</div>
+    <span>用户名:</span>
+<!--监听用户输入的用户名，用lazy将input改为change，实现丢失焦点后执行验证-->
+    <input type="text" v-model.lazy="uName" ><span>{{msg}}</span>
+
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data:() => {
+            return {
+                firstName:'',
+                lastName:'',
+                fullName: '',
+                uName:'',
+                msg:'',
+
+            }
+        },
+        methods: {
+            // 1.创建用户验证函数，调用后台接口验证数据
+            checkName:function (uName) {
+                let that = this;
+                // 调用接口，但是可以使用定时任务的方式模拟
+                setTimeout(function () {
+                    // 模拟接口调用
+                    if (uName==='admin'){
+                        that.msg = '用户名已存在';
+                    }else {
+                        that.msg= '可以使用';
+                    }
+                }, 2000)
+            }
+        },
+        watch: {
+            firstName: function (val) {
+                this.fullName = val + ' ' + this.lastName;
+            },
+            lastName: function (val) {
+                this.fullName = this.firstName + ' ' + val;
+            },
+            // 2.监视器同名函数监视用户名的输入，调用验证函数进行验证
+            uName: function (val) {
+                this.checkName(val)
+                this.msg='正在验证...'
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Axios概述</title>
+    <script src="../scripts/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="app">
+
+</div>
+
+<script type="text/javascript">
+
+    // axios.get('http://127.0.0.1:8000/api/v1/products/').then((ret)=>{
+    //     console.log(ret.data);
+    // })
+
+    // axios.delete('http://127.0.0.1:8000/api/v1/products/15/').then((ret) => {
+    //     console.log(ret, ret.data);
+    // })
+
+    // axios.post('http://127.0.0.1:8000/api/v1/products/', {
+    //     name:'好玩'
+    // }).then((ret) => {
+    //     console.log(ret, ret.data)
+    // })
+
+    // const params = new URLSearchParams();
+    // params.append('name', '实验');
+    // axios.post('http://127.0.0.1:8000/api/v1/products/', params).then((ret) => {
+    //     console.log(ret, ret.data)
+    // })
+
+    // axios.put('http://127.0.0.1:8000/api/v1/products/17/', {
+    //     name:'好玩1'
+    // }).then((ret) => {
+    //     console.log(ret, ret.data)
+    // })
+
+    // const params = new URLSearchParams();
+    // params.append('name', '实验');
+    // axios.put('http://127.0.0.1:8000/api/v1/products/17/', params).then((ret) => {
+    //     console.log(ret, ret.data)
+    // })
+
+    // axios.get('http://127.0.0.1:8000/api/v1/products/1/').then((ret)=>{
+    //     // console.log(ret.data);  // {id: 1, name: "联想", ctime: "2020-05-01T02:48:03.276515Z"}
+    //     // console.log(ret.headers); // {content-length: "635", content-type: "application/json"}
+    //     // console.log(ret.status);    // 200
+    //     // console.log(ret.statusText);    // OK
+    //     // console.log(ret.request)    // XMLHttpRequest {readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, onreadystatechange: ƒ, …}
+    //     console.log(ret.config)     //  {url: "http://127.0.0.1:8000/api/v1/products/1/", method: "get", headers: {…}, transformRequest: Array(1), transformResponse: Array(1), …}
+    //     // console.log(ret);
+    // })
+    axios.defaults.timeout=3000;
+    axios.defaults.baseURL = "http://127.0.0.1:8000/api/v1/";
+    // axios.defaults.headers['token'] = 'hello';
+
+    // axios.interceptors.request.use(function (config) {
+    //     // 在请求发出之前进行一些信息设置
+    //     // 在这里通过config可以得到更多信息，比如rul地址，可以根据url地址判断是否需要附带token
+    //     console.log(config.url);
+    //     config.headers['token'] = 'hello';
+    //     return config
+    // }, function(err){
+    //     // 处理响应的错误信息
+    //     console.log(err);
+    // });
+
+    axios.interceptors.response.use(function (res) {
+        // 在这里对返回的数据进行处理
+        let data = res.data;
+        return data;
+    },function (err) {
+        // 处理响应的错误信息
+        console.log(err);
+    })
+
+
+    axios.get('products/').then((ret)=>{
+        console.log(ret)
+    })
+
+
+
+
+    let vm = new Vue({
+        el: '#app',
+        data: {},
+    })
+
+</script>
+</body>
+</html>

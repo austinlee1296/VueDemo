@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>具名插槽</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+<base-layout>
+    <template v-slot:header>页头</template>
+    <template>页面</template>
+    <template v-slot:footer>页脚</template>
+</base-layout>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {},
+        components: {
+            'base-layout': {
+                template: `
+                    <div>
+                        <header>
+                            <slot name="header"></slot>
+                        </header>
+                        <main>
+                            <slot></slot>
+                        </main>
+                        <footer>
+                            <slot name="footer"></slot>
+                        </footer>
+                    </div>
+                `,
+            }
+        },
+    });
+
+</script>
+</body>
+</html>

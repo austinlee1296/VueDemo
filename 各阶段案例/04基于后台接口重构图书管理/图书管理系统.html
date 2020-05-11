@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书管理系统</title>
+    <script src="../../scripts/vue.js"></script>
+    <script src="../../scripts/moment-with-locales.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style type="text/css">
+        .grid {
+            margin: auto;
+            width: 530px;
+            text-align: center;
+        }
+
+        .grid table {
+            border-top: 1px solid #C2D89A;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grid th, td {
+            padding: 10px;
+            border: 1px dashed #F3DCAB;
+            height: 35px;
+            line-height: 35px;
+        }
+
+        .grid th {
+            background-color: #F3DCAB;
+        }
+
+        .grid .book {
+            padding-bottom: 10px;
+            padding-top: 5px;
+            background-color: #F3DCAB;
+        }
+
+        .grid .total {
+            height: 30px;
+            line-height: 30px;
+            background-color: #F3DCAB;
+            border-top: 1px solid #C2D89A;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="grid">
+        <h1>图书管理</h1>
+        <div class="book">
+            <div>
+                <label for="id" hidden>
+                    编号：
+                </label>
+                <input type="text" id="id" v-model="id" hidden v-focus>
+                <label for="name">
+                    名称：
+                </label>
+                <input type="text" id="name" v-model.lazy="name">
+                <button @click.prevent="handler_add" :disabled="submitFlag">提交</button>
+            </div>
+        </div>
+        <div class="total">
+            <span>图书总数：</span>
+            <span>{{total}}</span>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(book, index) in books" :key="book.id">
+                <td>{{book.id}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.date|timeFormat}}</td>
+                <td>
+                    <a href="" @click.prevent="handler_edit(book.id)">修改</a>
+                    <span>|</span>
+                    <a href="" @click.prevent="handler_del(book.id)">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    // 指定默认目录
+    axios.defaults.baseURL = 'http://127.0.0.1:8000/api/v1/';
+    // 添加响应拦截器
+    axios.interceptors.response.use(function (res) {
+        return res.data;
+    }, function (error) {
+        console.log(error);
+    })
+
+    let vm = new Vue({
+        el: '#app',
+        data: () => {
+            return {
+                submitFlag: true,
+                idFlag: false,
+                id: '',
+                name: '',
+                books: []
+            }
+        },
+        methods: {
+            handler_add: async function () {
+                let that = this;
+                // 根据旗标判断是添加还是删除，旗标为真即为添加
+                if (this.idFlag) {
+                    // 使用axios的put方法来更改数据
+                    await axios.put('products/' + that.id + '/', {
+                        name:that.name
+                    }).then(function(data){
+                        // 如果dta有值（修改成功）则刷新页面
+                        if (data){
+                            that.queryData();
+                        }
+                    });
+                } else {
+                    // axios的post方法上传数据并添加到数据库
+                    axios.post('products/', {
+                        name: this.name
+                    }).then(function (data) {
+                        // 如果上传成功，则刷新页面（注意：这里的data并非Promise对象！）
+                        if (data){
+                            that.queryData();
+                        }
+                    })
+                }
+                this.id = '';
+                this.name = '';
+            },
+            handler_del: async function (id) {
+                // 删除 删除成功后刷新页面
+                await axios.delete('products/' + id + '/');
+                await this.queryData();
+            },
+            handler_edit: async function (id) {
+                // 1.填充表单
+                // 根据id找到后台的元素，使用axios的get方法
+                let that = this;
+                let book = await axios.get('products/' + id + '/').then(function (data) {
+                    return data;
+                })
+                console.log(book)
+                // 将找到的数组中的元素的id和name赋值给添加数据中的框
+                this.id = book.id;
+                this.name = book.name;
+                // 2.在原来的添加数据表单中编辑数据
+                // 禁用id编辑
+                this.idFlag = true;
+                // 3.重用添加方法
+            },
+            // 数据源获取方法
+            queryData:async function() {
+                this.books = await axios.get('products/')
+            }
+        },
+        // 自定义指令
+        directives: {
+            focus: {
+                inserted: function (el) {
+                    el.focus();
+                }
+            }
+        },
+        //计算属性
+        computed: {
+            total: function () {
+                return this.books.length;
+            }
+        },
+        // 过滤器
+        filters: {
+            timeFormat: function (date) {
+                moment.locale('zh-cn');
+                return moment(date).format('MMMM Do YYYY, a h:mm:ss');
+            }
+        },
+        // 侦听器
+        watch: {
+            // 防止重名，如果重名，则将submit按钮禁用
+            name: function (val) {
+                let that = this;
+                // 防止空数据上传，如果名字为空，submit按钮被禁用
+                if (this.name !== ''){
+                    // 通过axios方法到后台查询是否重名
+                    axios.get('products/names/' + this.name).then(function (data) {
+                        // 通过返回值来设置submit按钮的状态
+                        that.submitFlag = data.status === 1;
+                    })
+                }
+            }
+        },
+        // 生命周期
+        mounted: function () {
+            // 方法1：
+            // let that = this;
+            // axios.get('http://127.0.0.1:8000/api/v1/products/').then(function (ret) {
+            //     that.books = ret.data;
+            // });
+            // 方法2：
+            // axios.get('products/').then((ret) => {
+            //     this.books = ret.data;
+            // });
+            // 方法3：
+            // let that = this;
+            //
+            // async function f() {
+            //     const ret = await axios.get('http://127.0.0.1:8000/api/v1/products/')
+            //     that.books = ret.data;
+            // }
+            //
+            // f();
+            // 方法4：
+            this.queryData();
+        },
+    });
+
+</script>
+</body>
+</html>

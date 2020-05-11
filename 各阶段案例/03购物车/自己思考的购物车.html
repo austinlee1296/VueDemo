@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <script src="../../scripts/vue.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <table>
+        <thead>
+            <tr>
+                <td>我的商品</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr :key="item.id" v-for="(item,index) in product_list">
+                <td><product :img="item.img" :name="item.name" :count="item.count" @add="handler_add(item)" @minus="handler_minus(item)" @del="handler_del(item.id)"></product></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+                    总价{{total}}
+                    <button @click="handler_submit">结算</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el: '#app',
+        data: {
+            product_list:[],
+            total:0
+        },
+        methods: {
+            handler_submit:function () {
+
+            },
+            handler_add:function (item) {
+                item.count += 1;
+                this.total += item.price;
+            },
+            handler_minus:function (item) {
+                item.count -= 1;
+                this.total -= item.price;
+                if (item.count === 0){
+                    this.handler_del(item.id)
+                }
+            },
+            handler_del:function (id) {
+                let item = this.product_list.filter(function (value) {
+                    return value.id === id;
+                })[0]
+
+                let index = this.product_list.findIndex(function (value) {
+                    return value.id === id;
+                });
+                this.product_list.splice(index,1);
+                this.total -= item.count * item.price;
+            }
+        },
+        components: {
+            'product': {
+                props:['img', 'name', 'count'],
+                template: `
+                    <div>
+                        <img :src="img">
+                        <span>{{name}}</span>
+                        <span>
+                            <button @click="$emit('add')">加</button>
+                            <input type="text" v-model="count">
+                            <button @click="$emit('minus')">减</button>
+                        </span>
+                        <button @click="$emit('del')">删</button>
+                    </div>
+                `,
+            }
+        },
+        mounted:function () {
+            this.product_list = [{
+                id:1,
+                img:'',
+                name:'TCL电视',
+                count:1,
+                price:100,
+            },
+                {
+                    id:2,
+                    img:'',
+                    name:'机顶盒',
+                    count:1,
+                    price:100,
+                },
+                {
+                    id:3,
+                    img:'',
+                    name:'海尔冰箱',
+                    count:1,
+                    price:100,
+                },
+                {
+                    id:4,
+                    img:'',
+                    name:'小米手机',
+                    count:1,
+                    price:100,
+                },
+                {
+                    id:5,
+                    img:'',
+                    name:'PPTV电视',
+                    count:1,
+                    price:100,
+                },];
+
+            this.product_list.forEach((item)=>{
+                this.total += item.price * item.count;
+            })
+        }
+    });
+
+</script>
+</body>
+</html>

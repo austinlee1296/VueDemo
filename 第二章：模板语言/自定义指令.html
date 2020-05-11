@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自定义指令</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+<input type="text" v-color="{color:customColor}">
+
+</div>
+
+<script type="text/javascript">
+
+    Vue.directive('color', {
+        bind: (el, binding)=>{
+            el.style.backgroundColor = binding.value.color
+        }
+    })
+
+    let vm = new Vue({
+        el:'#app',
+        data:() => {
+            return {
+                customColor:'red'
+            }
+        },
+        methods: {},
+        directives:{
+            color: {
+                bind: (el, binding)=>{
+                    el.style.backgroundColor = binding.value.color
+                }
+            }
+        },
+    });
+
+</script>
+</body>
+</html>

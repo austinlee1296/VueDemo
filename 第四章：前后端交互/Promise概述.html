@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+
+</div>
+
+<script type="text/javascript">
+    let pm = new Promise(function (resolve, reject) {
+        // 实现异步处理逻辑
+        setTimeout(function () {
+            let flag = true;
+            if (flag){
+                // 正常情况，得到真实数据
+                resolve('hello vue');
+            }else {
+                // 异常情况，得到异常数据
+                reject('bad connection')
+            }
+        }, 1000)
+        // 成功时调用 resolve()
+        // 失败时调用 reject()
+    });
+    pm.then(function (data) {
+        // 从 resolve得到正常结果
+        console.log(data);
+    }, function (info) {
+        // 从 reject 得到错误信息
+        console.log(info);
+    });
+
+
+    let vm = new Vue({
+        el:'#app',
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

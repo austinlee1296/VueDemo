@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue-Router的基本使用</title>
+    <!--导入Vue文件，会为window对象挂载一个vue构造函数new Vue-->
+    <script src="../scripts/vue.js"></script>
+    <!--1. 导入vue-router 会为window对象挂载一个vue-router构造函数new VueRouter-->
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<!--被vm实例锁控制的区域-->
+<div id="app">
+    <p>
+        <!--2.1父级路由链接-->
+        <router-link to="/user">User</router-link>
+        <router-link to="/register">Register</router-link>
+    </p>
+    <div>
+        <!--2.2父级路由填充位-->
+        <router-view></router-view>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    // 4.定义路由组件
+    let User = {
+        template: `<div>User</div>`
+    }
+
+    let Register = {
+        template: `
+            <div>
+                <h1>Register 组件</h1>
+                <hr/>
+                <router-link to="/register/tab1">Tab1</router-link>
+                <router-link to="/register/tab2">Tab2</router-link>
+
+                <router-view/>
+            </div>
+        `
+    }
+
+    let Tab1 = {
+        template:`<h3>Tab1</h3>`
+    }
+
+    let Tab2 = {
+        template:`<h3>Tab2</h3>`
+    }
+
+    // 5.创建路由实例并配置路由规则
+    // 创建路由实例对象
+    let router = new VueRouter({
+
+        routes:[
+
+            {path: '/', redirect:'/user'},
+            {path:'/user', component:User},
+
+            {
+                path:'/register',
+                component: Register,
+                // 4.通过children属性，为/register添加子路由
+                children:[
+                    {path: '/register/tab1', component:Tab1},
+                    {path:'/register/tab2', component:Tab2},
+                ]
+            }
+        ]
+    })
+
+    // 创建vm实例对象
+    let vm = new Vue({
+        // 指定控制的区域
+        el: '#app',
+        router,
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

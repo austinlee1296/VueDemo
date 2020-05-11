@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+
+</div>
+
+<script type="text/javascript">
+
+    function queryData(url) {
+        return new Promise(function (resolve, reject) {
+            // 处理异步相关
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    resolve(xhr.responseText);
+                } else if (xhr.readyState === 4) {
+                    reject('Error:Bad Connection')
+                }
+            };
+            xhr.open('get', url);
+            xhr.send(null);
+        });
+    }
+    // // 常用实例方法
+    // let pm = queryData('http://127.0.0.1:8000/api/v1/products/');
+    // // 获取正常信息
+    // pm.then(function (data) {
+    //     console.log(data);
+    // });
+    // // 获取异常信息
+    // pm.catch(function (err) {
+    //     console.log(err)
+    // });
+    // // 不管成功还是失败都会触发的方法
+    // pm.finally(function (info) {
+    //     console.log(info);
+    // })
+    //
+    // let vm = new Vue({
+    //     el: '#app',
+    //     data: {},
+    //     methods: {},
+    // });
+
+    // 常用对象方法（类方法）
+    let pm1 = queryData('http://127.0.0.1:8000/api/v1/products/1/');
+    let pm2 = queryData('http://127.0.0.1:8000/api/v1/products/2/');
+    let pm3 = queryData('http://127.0.0.1:8000/api/v1/products/3/');
+    let pm4 = queryData('http://127.0.0.1:8000/api/v1/products/4/');
+    let pm5 = queryData('http://127.0.0.1:8000/api/v1/products/5/');
+
+    //1.Promise.all()，等待所有结果都返回后，输出为一个结果数组，顺序按传参的顺序一一对应
+    Promise.all([pm1, pm2, pm3, pm4, pm5]).then(function (data) {
+        console.log(data);
+    })
+    // 2.Promise.race()，只要有一个结果返回了，就输出这个结果，然后停止
+    Promise.race([pm1, pm2, pm3, pm4, pm5]).then(function (data) {
+        console.log(data);
+    })
+
+</script>
+</body>
+</html>

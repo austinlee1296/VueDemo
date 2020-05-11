@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>作用域插槽</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+<current-user></current-user>
+<current-user>
+    <template v-slot:default="slotProps">
+        {{slotProps.user.firstName}}
+    </template>
+</current-user>
+
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data: {},
+        methods: {},
+        components: {
+            'current-user': {
+                data:function () {
+                    return {
+                        user:{
+                            firstName:'Austin',
+                            lastName:'Lee'
+                        }
+                    }
+                },
+                template:`
+                    <span>
+                        <slot :user="user">{{user.lastName}}</slot>
+                    </span>
+                `,
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

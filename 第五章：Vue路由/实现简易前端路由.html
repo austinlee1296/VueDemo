@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>实现简易前端路由</title>
+    <script src="../scripts/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<div id="app">
+    <!--切换组件的超链接-->
+    <a href="#/zhuye">主页</a>
+    <a href="#/keji">科技</a>
+    <a href="#/caijing">财经</a>
+    <a href="#/yule">娱乐</a>
+    <!--根据：is属性指定的组件名，把对应的组件渲染到component标签坐在的位置-->
+    <!--可以吧 component 标签当做是组件的占位符-->
+    <component :is="comName"></component>
+</div>
+
+<script type="text/javascript">
+
+    // #region定义需要被切换的4个组件
+
+    // 主页组件
+    const zhuye = {
+        template:`<h1>主页信息</h1>`
+    }
+
+    // 科技组件
+    const keji = {
+        template:`<h1>科技信息</h1>`
+    }
+
+    // 财经组件
+    const caijing = {
+        template:`<h1>财经信息</h1>`
+    }
+
+    // 娱乐组件
+    const yule = {
+        template:`<h1>娱乐信息</h1>`
+    }
+
+    // #region vue实例对象
+    let vm = new Vue({
+        el:'#app',
+        data: {
+            comName:'zhuye'
+        },
+        methods: {},
+        components:{
+            zhuye,
+            keji,
+            caijing,
+            yule,
+        }
+    });
+
+    // 监听 window 的 onhashchange 事件，根据获取到的最新的 hash 值，切换要显示的组件的名称
+    window.onhashchange = function () {
+        // 通过 location.hash 获取到最新的 hash 值
+        vm.comName = location.hash.slice(2)
+    }
+
+</script>
+</body>
+</html>

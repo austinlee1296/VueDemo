@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>过滤器</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="msg">
+    <div>{{msg | upper}}</div>
+</div>
+
+<script type="text/javascript">
+    Vue.filter('过滤器名', function (value, arg) {
+        // 过滤器业务逻辑
+        // value是过滤器本身传递过来的参数
+        // arg是过滤器后面括号里传递过来的参数
+    })
+    let vm = new Vue({
+        el:'#app',
+        data:() => {
+            return {
+                msg:'hello Vue'
+            }
+        },
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

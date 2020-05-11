@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>动态路由匹配</title>
+    <!--导入Vue文件-->
+    <script src="../scripts/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<!--被vm实例锁控制的区域-->
+<div id="app">
+    <router-link to="/bool/1">Bool</router-link>
+    <router-link to="/bool/2">Bool</router-link>
+    <router-link to="/bool/3">Bool</router-link>
+    <router-link to="/objects/1">Objects</router-link>
+    <router-link to="/objects/2">Objects</router-link>
+    <router-link to="/objects/3">Objects</router-link>
+    <router-link to="/functions/1">Function</router-link>
+    <router-link to="/functions/2">Function</router-link>
+    <router-link to="/functions/3">Function</router-link>
+
+    <router-view></router-view>
+
+</div>
+
+<script type="text/javascript">
+
+    let Bool = {
+        props: ['id'],
+        template: `<h1>Bool{{id}}</h1>`
+    }
+
+    let Objects = {
+        props: ['name', 'age'],
+        template: `<h1>Objects{{name}}{{age}}</h1>`
+    }
+
+    let Functions = {
+        props: ['name', 'age', 'id'],
+        template: `<h1>Function{{id}}{{name}}{{age}}</h1>`
+    }
+
+    let router = new VueRouter({
+        routes: [
+            // 路由重定向
+            {path: '/', redirect: '/bool/1'},
+            // 动态路径参数，以冒号开头，开启props传参（Bool类型）
+            {path: '/bool/:id', component: Bool, props: true},
+            // 对象类型
+            {path: '/objects/:id', component: Objects, props: {name: 'lisi', age: 12}},
+            // 函数类型
+            {path: '/functions/:id', component: Functions, props: route => ({name:'lisi', age:12, id:route.params.id})}
+
+        ]
+    })
+
+    // 创建vm实例对象
+    let vm = new Vue({
+        // 指定控制的区域
+        el: '#app',
+        router,
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

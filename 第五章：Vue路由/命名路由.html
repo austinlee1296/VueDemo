@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>命名路由</title>
+    <!--导入Vue文件，会为window对象挂载一个vue构造函数new Vue-->
+    <script src="../scripts/vue.js"></script>
+    <!--1. 导入vue-router 会为window对象挂载一个vue-router构造函数new VueRouter-->
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+<!--被vm实例锁控制的区域-->
+<div id="app">
+    <!--
+    - 2. 添加路由连接（可以理解为添加导航标签）
+    - router-link是vue中提供的标签，默认会渲染为a标签
+    - to 属性默认会被渲染为href属性，属性的值默认会被渲染为#开头的hash地址
+    -->
+    <router-link :to="{name:'user', params:{id:1}}">User</router-link>
+    <router-link to="/register">Register</router-link>
+
+    <!--
+    - 3. 路由填充为（也叫路由占位符）
+    - 将来通过路由规则匹配到的组件，将会被渲染到 router-view 所在的位置
+    -->
+    <router-view></router-view>
+
+</div>
+
+<script type="text/javascript">
+    // 4.定义路由组件
+    let User = {
+        props: ['id', 'name', 'age'],
+        template: `<div>UserID---{{id}}---username{{name}}---user age{{age}}</div>`
+    }
+
+    let Register = {
+        template: `<div>Register</div>`
+    }
+
+    // 5.创建路由实例并配置路由规则
+    // 创建路由实例对象
+    let router = new VueRouter({
+        // 配置路由规则，routes是路由规则数组
+        routes: [
+            // 每个路由规则都是一个配置对象，其中至少包含path和component两个属性
+            // path表示当前路由规则匹配的hash地址
+            // component表示当前路由规则对应要展示的组件
+            // 路由重定向
+            {path: '/', redirect: '/user'},
+            {
+                //命名
+                name:'user',
+                path: '/user/:id',
+                component: User,
+                props: route => ({name:'zs', age:'12', id:route.params.id}),
+            },
+            {path: '/register', component: Register}
+        ]
+    })
+
+    // 创建vm实例对象
+    let vm = new Vue({
+        // 指定控制的区域
+        el: '#app',
+        // 6.把路由挂载到Vue根实例中
+        router: router, // 简写为router就可以了，ES6中如果属性名和属性值一致，就可以只写一次
+        data: {},
+        methods: {},
+    });
+
+</script>
+</body>
+</html>

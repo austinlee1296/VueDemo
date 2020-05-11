@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数组操作</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <div>
+        <span>
+            <input type="text" v-model="fName">
+            <button @click="handler_add">添加</button>
+            <button @click="handler_del">删除</button>
+            <button @click="handler_change">替换</button>
+            <button @click="handler_edit">修改</button>
+        </span>
+    </div>
+    <div>
+        <ul>
+            <li :key="index" v-for="(item, index) in fList">{{item}}</li>
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data:() => {
+            return {
+                fName:'',
+                fList:['橘子','苹果','香蕉']
+            }
+        },
+        methods: {
+            handler_add:function () {
+                this.fList.push(this.fName)
+            },
+            handler_del:function () {
+                this.fList.pop()
+            },
+            handler_change:function () {
+                this.fList = this.fList.slice(0,1);
+            },
+            handler_edit: function () {
+                this.fList[1] = '柠檬'    // 直接通过列表的索引去修改列表，尽管列表本身已经改变，但页面不会有变化
+                // 下面的2种方法都可以修改数组某个索引并更新页面数据（响应式）
+                // Vue.set(this.fList, 1, '柠檬')
+                vm.$set(this.fList, 1, '柠檬')
+            }
+        },
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>组件的插槽</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <alert-box>Something Happened.</alert-box>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data: {},
+        methods: {},
+        components: {
+            'alert-box': {
+                template: `
+                    <div>
+                        <strong>Error!</strong>
+                        <slot></slot>
+                    </div>
+                `,
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

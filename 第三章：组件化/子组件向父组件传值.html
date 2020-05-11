@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../scripts/vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <div :style="{fontSize:fontSize + 'px'}">{{pMsg}}</div>
+<!--调用子组件，动态传递父组件的属性list-->
+    <sun-com :f-list="list"></sun-com>
+    <menu-item @enlarge-text="handler"></menu-item>
+    <menu-value @enlarge-text-value="handler1($event)"></menu-value>
+</div>
+
+<script type="text/javascript">
+
+    let vm = new Vue({
+        el:'#app',
+        data: {
+            pMsg:'hello Vue',
+            list:['apple', 'orange', 'banana'],
+            fontSize:12,
+        },
+        methods: {
+            handler:function () {
+                this.fontSize += 1;
+            },
+            handler1: function (val) {
+                this.fontSize += val;
+            }
+        },
+        components:{
+            // 定义子组件名
+            'sun-com':{
+                // 通过props接收父组件的值，注意驼峰式命名是可以直接在template模板中使用的
+                props:['fList'],
+                // 在模板中调用父组件的值，并对这个值进行修改，注意这个方法在实际开发中是禁用的
+                template:`
+                        <div>
+                            <ul>
+                                <li :key="index" v-for="(item, index) in fList">{{item}}</li>
+                            </ul>
+                            <button @click="handler(fList)">点击</button>
+                        </div>
+                `,
+                methods: {
+                    handler:function (list) {
+                        list.push('lemon')
+                    }
+                }
+            },
+            // 在实际开发中，要用这种自定义事件的方法去修改父组件的值
+            'menu-item':{
+                template: `
+                        <button @click="$emit('enlarge-text')">扩大字体</button>
+                `,
+            },
+            'menu-value':{
+                template:`
+                        <button @click="$emit('enlarge-text-value', 1)">扩大字体</button>
+                `,
+            }
+        }
+    });
+
+</script>
+</body>
+</html>
